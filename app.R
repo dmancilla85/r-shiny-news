@@ -8,40 +8,23 @@
 #
 
 library(shiny)
+source("framework.r")
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
     # Application title
-    singleton(tags$head(tags$script(
-        HTML(
-            'Shiny.addCustomMessageHandler("jsCode",function(message) {eval(message.value);});'
-        )
-    ))),
+    # singleton(tags$head(tags$script(
+    #     HTML(
+    #         'Shiny.addCustomMessageHandler("jsCode",function(message) {eval(message.value);});'
+    #     )
+    # ))),
     
-    titlePanel("Análisis de Noticias..."),
+    titlePanel("Análisis de sentimiento de noticias (Enfoque basado en EmoLex)"),
+    
     
     # Sidebar with a slider input for number of bins
     sidebarLayout(
         sidebarPanel(
-            sliderInput(
-                "bins",
-                "Number of bins:",
-                min = 1,
-                max = 50,
-                value = 30
-            ),
-            
-            selectInput(
-                inputId = "country",
-                label = "País",
-                choices = c(
-                    "Argentina" = "ar",
-                    "Chile" = "cl",
-                    "Brasil" = "br",
-                    "Paraguay" = "py"
-                )
-            ),
-            
             selectInput(
                 inputId = "language",
                 label = "Idioma",
@@ -52,6 +35,17 @@ ui <- fluidPage(
             checkboxInput(inputId = "onlyLatestNews", "Sólo últimas noticias"),
             conditionalPanel(
                 condition = "input.onlyLatestNews == true",
+                selectInput(
+                    inputId = "country",
+                    label = "País",
+                    selected = "ar",
+                    choices = c(
+                        "Argentina" = "ar",
+                        "Chile" = "cl",
+                        "Brasil" = "br",
+                        "Paraguay" = "py"
+                    )
+                ),
                 selectInput(
                     inputId = "category",
                     label = "Categoría",
@@ -68,14 +62,15 @@ ui <- fluidPage(
             ),
             conditionalPanel(
                 condition = "input.onlyLatestNews == false",
-                uiOutput("daterange"),
-                textInput(
-                    inputId = "caption",
-                    label = "Frase a buscar",
-                    placeholder = "Dólar"
-                ),
-                verbatimTextOutput("validation")
+                uiOutput("daterange")
             ),
+            textInput(
+                inputId = "caption",
+                label = "Frase a buscar",
+                value = "Covid-19",
+                placeholder = "Ingrese una palabra específica"
+            ),
+            verbatimTextOutput("validation"),
             actionButton("start", "Iniciar")
             
         ),
@@ -86,35 +81,31 @@ ui <- fluidPage(
 )
 
 
-# Define server logic required to draw a histogram
+# Define server logic
 server <- function(input, output, session) {
-    
     observeEvent(input$start, {
         js_string <- 'alert("Thank you for clicking");'
         session$sendCustomMessage(type = 'jsCode', list(value = js_string))
     })
     
-    output$validation <- reactive({
-        validate(
-            need(
-                input$caption != "" &&
-                    input$onlyLatestNews == FALSE,
-                "Ingrese una frase a buscar"
-            ),
-            need(
-                input$daterange[1] < input$daterange[2],
-                "El rango de fechas es incorrecto"
-            )
-        )
-        
-    })
+    # output$validation <- reactive({
+    #     validate(
+    #         need( !is.null(input) & input$caption != "" ,
+    #             "Ingrese una frase a buscar"
+    #         ),
+    #         need(str_length(input) > 4 ,
+    #              "La longitud debe ser mayor que 4"
+    #         )
+    #     )
+    #
+    # })
     
     output$daterange <- renderUI({
         dateRangeInput(
             "daterange",
             "Rango de fechas:",
-            min    = Sys.Date() - 30,
-            start  = Sys.Date() - 30,
+            min    = Sys.Date() - 3,
+            start  = Sys.Date() - 3,
             max    = Sys.Date(),
             end    = Sys.Date(),
             format = "dd/mm/yy",
@@ -126,15 +117,45 @@ server <- function(input, output, session) {
     
     
     output$distPlot <- renderPlot({
-        # generate bins based on input$bins from ui.R
-        x    <- faithful[, 2]
-        bins <- seq(min(x), max(x), length.out = input$bins + 1)
+        if (!is.null(input$daterange) && (!is.null(input$caption)
+                                          &&
+                                          str_length(input$caption) > 3))
+        {
+            newsApi <- NewsApi(
+                # Language
+                p_from = input$daterange[1],
+                # older as one month back (free User)
+                p_to = input$daterange[2],
+                p_country = input$country,
+                p_language = input$language,
+                # dates surround with "
+                p_query = input$caption,
+                # sort criteria
+                p_topNews = input$onlyLatestNews,
+                p_category = input$category,
+                p_searchInTitles = TRUE
+            )
+            
+            df_req <- getNews(newsApi)
+            
+            if (is.null(dim(df_req)) || dim(df_req)[1] == 0)
+            {
+                # show nothing
+                print("nothing here...")
+                
+                ggplot() + geom_blank()
+                
+            }
+            else
+            {
+                # show plot
+                nrc <- processWithNRC(df_req, input$language)
+                
+                plotSentiment(nrc, input$caption, "Subtitulo")
+                
+            }
+        }
         
-        # draw the histogram with the specified number of bins
-        hist(x,
-             breaks = bins,
-             col = 'darkgray',
-             border = 'white')
         
     })
 }

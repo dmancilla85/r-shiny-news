@@ -1,81 +1,34 @@
-library(shiny)
+source("./src/sidebar.R", local = TRUE, encoding = c("UTF-8"))
+
+
+linebreaks <- function(n) {
+  HTML(strrep(br(), n))
+}
 
 # Define UI for application that draws a histogram
-ui <- fluidPage(
+ui <- shiny::fluidPage(
+  theme = "custom.css",
   # Application title
   singleton(tags$head(tags$script(
     HTML(
       'Shiny.addCustomMessageHandler("jsCode",function(message) {eval(message.value);});'
     )
   ))),
-  titlePanel(title = HTML("<b>ANÁLISIS DE SENTIMIENTO EN TITULARES DE NOTICIAS (Enfoque basado en EmoLex)</b>")),
-
+  tags$head(
+    tags$link(rel = "preconnect", href = "https://fonts.gstatic.com"),
+    tags$link(rel = "stylesheet", href = "https://fonts.googleapis.com/css2?family=Merienda&display=swap")
+  ),
+  titlePanel(title = HTML("<b>Análisis de sentimiento en noticias</b>"), windowTitle = "Análisis de sentimiento"),
+  linebreaks(1),
 
   # Sidebar with a slider input for number of bins
-  sidebarLayout(
-    sidebarPanel(
-      selectInput(
-        inputId = "sel_language",
-        label = "Idioma",
-        choices = c(
-          "Español" = "es",
-          "Inglés" = "en"
-        ),
-        selected = "es"
-      ),
-      checkboxInput(
-        inputId = "chk_latest_news", label = "Sólo últimas noticias",
-        value = TRUE
-      ),
-      conditionalPanel(
-        condition = "input.chk_latest_news == true",
-        selectInput(
-          inputId = "sel_country",
-          label = "País",
-          selected = "ar",
-          choices = c(
-            "Argentina" = "ar",
-            "Chile" = "cl",
-            "Brasil" = "br",
-            "Paraguay" = "py",
-            "Estados Unidos" = "us"
-          )
-        ),
-        selectInput(
-          inputId = "sel_category",
-          label = "Categoría",
-          selected = "*",
-          choices = c(
-            "Todas" = "*",
-            "General" = "general",
-            "Negocios" = "business",
-            "Entretenimiento" = "entertainment",
-            "Salud" = "health",
-            "Ciencia" = "science",
-            "Deportes" = "sports",
-            "Tecnología" = "technology"
-          )
-        )
-      ),
-      conditionalPanel(
-        condition = "input.chk_latest_news == false",
-        uiOutput(outputId = "dt_fechas"),
-        checkboxInput(
-          inputId = "chk_search_titles",
-          label = "Buscar en títulos",
-          value = TRUE
-        )
-      ),
-      textInput(
-        inputId = "txt_caption",
-        label = "Frase a buscar",
-        value = NULL,
-        placeholder = "Ingrese una palabra específica"
-      ),
-      actionButton(inputId = "btn_start", label = "Buscar")
-    ),
+  shiny::sidebarLayout(
+    sidebarPanel = mySidebarPanel(),
 
     # Show a plot of the generated distribution
-    mainPanel(plotOutput("pl_sentiment"))
-  ),
+    mainPanel = shiny::mainPanel(
+      shinycustomloader::withLoader(plotOutput(outputId = "plt_sentiment")),
+      shinycustomloader::withLoader(dataTableOutput(outputId = "tbl_sentiment"))
+    )
+  )
 )

@@ -8,9 +8,9 @@
 #
 
 library(shiny)
-source("./src/libraries.R", local = TRUE, encoding = c("UTF-8"))
+options(shiny.sanitize.errors = TRUE)
 source("ui.R", local = TRUE, encoding = c("UTF-8"))
 source("server.R", local = TRUE, encoding = c("UTF-8"))
 
 # Run the application
-shinyApp(ui = ui, server = server)
+shiny::shinyApp(ui = ui, server = server)

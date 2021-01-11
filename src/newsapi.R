@@ -85,217 +85,8 @@ showError <- function(err, type = "Error:") {
 # ################################# #
 
 # ################################# #
-verifyResponse <- function(myRequest) {
-  if (myRequest$totalResults == 0) {
-    return(NULL)
-  }
-
-  df <- data.frame(
-    title = character(),
-    description = character(),
-    url = character(),
-    urlToImage = character(),
-    publishedAt = as.Date(character()),
-    content = character(),
-    source.name = character()
-  )
-
-  tryCatch(
-    if (myRequest$status != "ok") {
-      print(paste(myRequest$status, myRequest$code, ":", myRequest$message))
-    } else {
-      df <- convertFromJSON(myRequest)
-    },
-    warning = function(err) {
-      showError(err, "Warning")
-    },
-    error = function(err) {
-      showError(err)
-    }
-  )
-
-  return(df)
-}
-
-
-# ################################# #
-
-# ################################# #
-getEverything <- function(obj,
-                          freeAccountMode = TRUE) {
-  df_request <- getEverythingPerPage(obj, 1)
-
-  if (dim(df_request)[1] == 0 || isTRUE(freeAccountMode)) {
-    return(df_request)
-  }
-
-  df_request$page <- 1
-
-  totalPages <- as.integer(df_request$totalResults[1] / obj$pageSize)
-
-  if (totalPages == 0) {
-    print("No hay resultados")
-    return(df_request)
-  }
-
-  if (totalPages == 1) {
-    df_request$totalResults <- NULL
-    return(df_request)
-  }
-
-  for (i in seq(2, totalPages, by = 1)) {
-    # print(paste("Retrieving page", i, "..."))
-    # Sys.sleep(0.5)
-
-    aux <-
-      getEverythingPerPage(obj, i)
-
-    if (nrow(aux) == 0) {
-      df_request$totalResults <- NULL
-      return(df_request)
-    }
-
-    # Unir todos los resultados
-    aux$page <- i
-    df_request <- rbind(df_request, aux)
-  }
-
-  # Esta variable ya no la necesito
-  df_request$totalResults <- NULL
-
-  cadena <- str_replace_all(url_decode(obj$query), '\"', "")
-
-  if (obj$searchInTitles) {
-    df_request <- df_request %>% filter(str_detect(toupper(title), toupper(cadena)))
-  } else {
-    df_request <- df_request %>% filter(str_detect(toupper(description), toupper(cadena)))
-  }
-
-  return(df_request)
-}
-
-
-# ################################# #
-# Query all articles availables in NewsAPI
-# between a range of dates
-# ################################# #
-getEverythingPerPage <- function(obj,
-                                 currentPage = 1) {
-  ep_everything <- "https://newsapi.org/v2/everything"
-
-  if (isTRUE(obj$searchInTitles)) {
-    promise <- future(
-      api(ep_everything) %>%
-        api_query_(
-          apiKey = obj$token,
-          qInTitle = obj$query,
-          q = obj$query,
-          language = obj$language,
-          sortBy = obj$sortBy,
-          pageSize = obj$pageSize,
-          page = currentPage,
-          from = obj$from,
-          to = obj$to,
-          wt = "json"
-        ) %>% api_error_handler(warn_for_status)
-    ) %plan% multiprocess
-  } else {
-    promise <- future(
-      api(ep_everything) %>%
-        api_query_(
-          apiKey = obj$token,
-          q = obj$query,
-          language = obj$language,
-          sortBy = obj$sortBy,
-          pageSize = obj$pageSize,
-          page = currentPage,
-          from = obj$from,
-          to = obj$to,
-          wt = "json"
-        ) %>% api_error_handler(warn_for_status)
-    ) %plan% multiprocess
-  }
-
-  request <- value(promise)
-
-  df_request <- verifyResponse(request)
-
-  if (!is.null(df_request)) {
-    df_request$totalResults <- request$totalResults
-
-    cadena <- str_replace_all(url_decode(obj$query), '\"', "")
-
-    if (obj$searchInTitles) {
-      df_request <- df_request %>% filter(str_detect(toupper(title), toupper(cadena)))
-    } else {
-      df_request <- df_request %>% filter(str_detect(toupper(description), toupper(cadena)))
-    }
-  }
-
-  print("Todo x PAG")
-  View(df_request)
-
-  return(df_request)
-}
-
-# ################################# #
-# Retrieve newest headlines from News API
-# ################################# #
-getTopHeadLines <-
-  function(obj) {
-    ep_top_headlines <- "https://newsapi.org/v2/top-headlines"
-
-    if (is.null(obj$category) || obj$category == "*") {
-      promise <- future(
-        api(ep_top_headlines) %>%
-          api_query_(
-            country = obj$country,
-            apiKey = obj$token,
-            pageSize = obj$pageSize,
-            language = obj$language,
-            # q= obj$query Not available for now
-            wt = "json"
-          ) %>% api_error_handler(warn_for_status)
-      ) %plan% multiprocess
-    } else {
-      promise <- future(
-        api(ep_top_headlines) %>%
-          api_query_(
-            country = obj$country,
-            apiKey = obj$token,
-            category = obj$category,
-            pageSize = obj$pageSize,
-            language = obj$language,
-            # q= obj$query Not available for now
-            wt = "json"
-          ) %>% api_error_handler(warn_for_status)
-      ) %plan% multiprocess
-    }
-
-    request <- value(promise)
-
-    df_request <- verifyResponse(request)
-
-    cadena <- str_replace_all(url_decode(obj$query), '\"', "")
-
-    if (obj$searchInTitles) {
-      df_request <- df_request %>% filter(str_detect(toupper(title), toupper(cadena)))
-    } else {
-      df_request <- df_request %>% filter(str_detect(toupper(description), toupper(cadena)))
-    }
-
-    print("Topnews")
-
-    View(df_request)
-    return(df_request)
-  }
-
-
-# ################################# #
-
-# ################################# #
 convertFromJSON <- function(request) {
-  json_top <- toJSON(
+  json_top <- jsonlite::toJSON(
     request$articles,
     Date = "ISO8601",
     POSIXt = "ISO8601",
@@ -304,7 +95,7 @@ convertFromJSON <- function(request) {
   )
 
   df_request <-
-    fromJSON(
+    jsonlite::fromJSON(
       json_top,
       simplifyDataFrame = T,
       flatten = T,
@@ -350,3 +141,223 @@ convertFromJSON <- function(request) {
 
   return(df_request)
 }
+
+# ################################# #
+
+# ################################# #
+verifyResponse <- function(response) {
+  if (response$totalResults == 0) {
+    return(NULL)
+  }
+
+  df <- data.frame(
+    title = character(),
+    description = character(),
+    url = character(),
+    urlToImage = character(),
+    publishedAt = as.Date(character()),
+    content = character(),
+    source.name = character()
+  )
+
+  tryCatch(
+    if (response$status != "ok") {
+      print(paste("Current status is", response$status))
+    } else {
+      df <- convertFromJSON(response)
+    },
+    warning = function(err) {
+      showError(err, "Warning")
+    },
+    error = function(err) {
+      showError(err)
+    }
+  )
+
+  return(df)
+}
+
+
+# ################################# #
+# Query all articles availables in NewsAPI
+# between a range of dates
+# ################################# #
+getEverythingPerPage <- function(obj,
+                                 currentPage = 1) {
+  ep_everything <- "https://newsapi.org/v2/everything"
+
+  if (isTRUE(obj$searchInTitles)) {
+    promise <- future::future(
+      httr::GET(
+        url = ep_everything,
+        query = list(
+          apiKey = obj$token,
+          qInTitle = obj$query,
+          q = obj$query,
+          language = obj$language,
+          sortBy = obj$sortBy,
+          pageSize = obj$pageSize,
+          page = currentPage,
+          from = obj$from,
+          to = obj$to,
+          wt = "json"
+        )
+      )
+    ) %plan% multicore
+  } else {
+    promise <- future::future(
+      httr::GET(
+        url = ep_everything,
+        query = list(
+          apiKey = obj$token,
+          q = obj$query,
+          language = obj$language,
+          sortBy = obj$sortBy,
+          pageSize = obj$pageSize,
+          page = currentPage,
+          from = obj$from,
+          to = obj$to,
+          wt = "json"
+        )
+      )
+    ) %plan% multicore
+  }
+
+  resp <- future::value(promise)
+  jsonResponse <- jsonlite::fromJSON(httr::content(resp, "text"), simplifyVector = FALSE)
+  df_response <- verifyResponse(jsonResponse)
+
+
+  if (is.null(df_response)) {
+    return(NULL)
+  }
+
+  cadena <- stringr::str_replace_all(url_decode(obj$query), '\"', "")
+
+  if (obj$searchInTitles) {
+    df_response <- df_response %>%
+      dplyr::filter(stringr::str_detect(toupper(title), toupper(cadena)))
+  } else {
+    df_response <- df_response %>%
+      dplyr::filter(stringr::str_detect(toupper(description), toupper(cadena)))
+  }
+
+  return(df_response)
+}
+
+# ################################# #
+
+# ################################# #
+getEverything <- function(obj,
+                          freeAccountMode = TRUE) {
+  df_request <- getEverythingPerPage(obj, 1)
+
+  if (dim(df_request)[1] == 0 || isTRUE(freeAccountMode)) {
+    return(df_request)
+  }
+
+  df_request$page <- 1
+
+  totalPages <- as.integer(df_request$totalResults[1] / obj$pageSize)
+
+  if (totalPages == 0) {
+    print("No hay resultados")
+    return(df_request)
+  }
+
+  if (totalPages == 1) {
+    df_request$totalResults <- NULL
+    return(df_request)
+  }
+
+  for (i in seq(2, totalPages, by = 1)) {
+    aux <-
+      getEverythingPerPage(obj, i)
+
+    if (nrow(aux) == 0) {
+      df_request$totalResults <- NULL
+      return(df_request)
+    }
+
+    # Unir todos los resultados
+    aux$page <- i
+    df_request <- rbind(df_request, aux)
+  }
+
+  cadena <- stringr::str_replace_all(urltools::url_decode(obj$query), '\"', "")
+
+  if (obj$searchInTitles) {
+    df_request <- df_request %>%
+      dplyr::filter(stringr::str_detect(toupper(title), toupper(cadena)))
+  } else {
+    df_request <- df_request %>%
+      dplyr::filter(stringr::str_detect(toupper(description), toupper(cadena)))
+  }
+
+  return(df_request)
+}
+
+
+# ################################# #
+# Retrieve newest headlines from News API
+# ################################# #
+getTopHeadLines <-
+  function(obj) {
+    ep_top_headlines <- "https://newsapi.org/v2/top-headlines"
+
+    if (is.null(obj$category) || obj$category == "*") {
+      promise <- future::future(
+        httr::GET(
+          url = ep_top_headlines,
+          query = list(
+            country = obj$country,
+            apiKey = obj$token,
+            pageSize = obj$pageSize,
+            language = obj$language,
+            # q= obj$query Not available for now
+            wt = "json"
+          )
+        )
+      ) %plan% multicore
+    } else {
+      promise <- future::future(
+        httr::GET(
+          url = ep_top_headlines,
+          query = list(
+            country = obj$country,
+            apiKey = obj$token,
+            category = obj$category,
+            pageSize = obj$pageSize,
+            language = obj$language,
+            # q= obj$query Not available for now
+            wt = "json"
+          )
+        )
+      ) %plan% multicore
+    }
+
+    resp <- future::value(promise)
+    jsonResponse <- jsonlite::fromJSON(
+      httr::content(resp, "text"),
+      simplifyVector = FALSE
+    )
+    df_response <- verifyResponse(jsonResponse)
+
+    if (is.null(df_response)) {
+      return(NULL)
+    } else {
+      View(df_response)
+    }
+
+    cadena <- stringr::str_replace_all(urltools::url_decode(obj$query), '\"', "")
+
+    if (obj$searchInTitles) {
+      df_response <- df_response %>%
+        dplyr::filter(stringr::str_detect(toupper(title), toupper(cadena)))
+    } else {
+      df_response <- df_response %>%
+        dplyr::filter(stringr::str_detect(toupper(description), toupper(cadena)))
+    }
+
+    return(df_response)
+  }

@@ -5,6 +5,18 @@ if (!require(syuzhet)) {
   library(syuzhet)
 }
 
+# Sentiment Analysis
+if (!require(shiny)) {
+  install.packages("shiny")
+  library(shiny)
+}
+
+# Sentiment Analysis
+if (!require(shinycustomloader)) {
+  install.packages("shinycustomloader")
+  library(shinycustomloader)
+}
+
 # String manipulations
 if (!require(stringr)) {
   install.packages("stringr")

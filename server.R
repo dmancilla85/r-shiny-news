@@ -3,8 +3,8 @@ source("./src/sentiment.R", local = TRUE, encoding = c("UTF-8"))
 
 # Define server logic
 server <- function(input, output, session) {
-  output$dt_fechas <- renderUI({
-    dateRangeInput(
+  output$dt_fechas <- shiny::renderUI({
+    shiny::dateRangeInput(
       inputId = "dt_fechas",
       label = "Rango de fechas:",
       min = Sys.Date() - 3,
@@ -16,55 +16,65 @@ server <- function(input, output, session) {
       separator = " - "
     )
   })
-  
-  output$pl_sentiment <- renderPlot({
-    input$btn_start
 
-    date_range <- isolate(input$dt_fechas)
-    caption_txt <- isolate(input$txt_caption)
-    country <- isolate(input$sel_country)
-    lang <- isolate(input$sel_language)
-    category <- isolate(input$sel_category)
-    top_news <- isolate(input$chk_latest_news)
-    titles <- isolate(input$chk_search_titles)
+  # TODO: revisar validez del analisis de sentimiento
+  values <- shiny::reactiveValues()
 
-    if (is.null(caption_txt) | caption_txt == "" ) {
-      #js_string <- 'alert("Ingrese algo para buscar");'
-      #session$sendCustomMessage(type = "jsCode", list(value = js_string))
-      ggplot() +
-        geom_blank()
-    }
+  shiny::observeEvent(input$btn_start, {
+    values$date_range <- shiny::isolate(input$dt_fechas)
+    values$caption_txt <- shiny::isolate(input$txt_caption)
+    values$country <- shiny::isolate(input$sel_country)
+    values$lang <- shiny::isolate(input$sel_language)
+    values$category <- shiny::isolate(input$sel_category)
+    values$top_news <- shiny::isolate(input$chk_latest_news)
+    values$titles <- shiny::isolate(input$chk_search_titles)
 
-    if (!is.null(date_range) &
-      (!is.null(caption_txt) & str_length(caption_txt) > 3)) {
+
+    if (!is.null(values$date_range) &
+      (!is.null(values$caption_txt) & stringr::str_length(values$caption_txt) > 3)) {
       newsApi <- NewsApi(
         # Language
-        p_from = date_range[1],
+        p_from = values$date_range[1],
         # older as one month back (free User)
-        p_to = date_range[2],
-        p_country = country,
-        p_language = lang,
+        p_to = values$date_range[2],
+        p_country = values$country,
+        p_language = values$lang,
         # dates surround with "
-        p_query = caption_txt,
+        p_query = values$caption_txt,
         # sort criteria
-        p_topNews = top_news,
-        p_category = category,
-        p_searchInTitles = titles
+        p_topNews = values$top_news,
+        p_category = values$category,
+        p_searchInTitles = values$titles
       )
 
-      df_req <- getNews(newsApi)
+      values$df_req <- getNews(newsApi)
+    }
+  })
 
-      if (is.null(dim(df_req)) || dim(df_req)[1] == 0) {
+  output$plt_sentiment <- shiny::renderPlot({
+    title <- stringr::str_to_title(values$caption_txt)
+    subtitle <- stringr::str_interp("Artículos que contienen la palabra ${title}")
+
+    if (is.null(values$df_req)) {
+      ggplot2::ggplot() +
+        ggplot2::geom_blank()
+    }
+    else {
+      if (dim(values$df_req)[1] == 0) {
         js_string <- 'alert("No hay resultados");'
         session$sendCustomMessage(type = "jsCode", list(value = js_string))
-        ggplot() +
-          geom_blank()
+        ggplot2::ggplot() +
+          ggplot2::geom_blank()
       }
       else {
         # show plot
-        nrc <- processWithNRC(df_req, lang)
-        plotSentiment(nrc, caption_txt, "Subtitulo")
+        nrc <- processWithNRC(values$df_req, values$lang)
+        plotSentiment(nrc, title = title, subtitle = subtitle)
       }
     }
+  })
+
+  output$tbl_sentiment <- renderDataTable({
+    input$btn_start
   })
 }

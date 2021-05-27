@@ -1,5 +1,7 @@
 
-# Variables
+#news <- modules::module({
+
+# NewsApi configuration object
 NewsApi <- setRefClass(
   "NewsAPI",
   fields = list(
@@ -33,7 +35,7 @@ NewsApi <- setRefClass(
       .self$sortBy <- p_sortBy
       .self$from <- paste('"', p_from, '"', sep = "")
       .self$to <- paste('"', p_to, '"', sep = "")
-      .self$query <- paste('"', url_encode(p_query), '"', sep = "")
+      .self$query <- paste('"', urltools::url_encode(p_query), '"', sep = "")
       .self$searchInTitles <- p_searchInTitles
       .self$topNews <- p_topNews
       .self$category <- p_category
@@ -57,21 +59,6 @@ newsApiCategories <-
 
 
 # ### FUNCTIONS ### #
-
-
-# ################################# #
-
-# ################################# #
-getNews <- function(obj) {
-  if (isTRUE(obj$topNews)) {
-    df <- getTopHeadLines(obj)
-    return(df)
-  } else {
-    df <- getEverything(obj)
-    return(df)
-  }
-}
-
 
 # ################################# #
 
@@ -128,9 +115,9 @@ convertFromJSON <- function(request) {
   df_request$content <- as.character(df_request$content)
   df_request$content <- unlist(df_request$content)
   df_request$content <-
-    str_replace_all(df_request$content, "chars]", "")
+    stringr::str_replace_all(df_request$content, "chars]", "")
   df_request$content <-
-    str_remove_all(df_request$content, "[+,0-9]")
+    stringr::str_remove_all(df_request$content, "[+,0-9]")
   df_request$content <- gsub("\\[|\\]", "", df_request$content)
 
   df_request[df_request$content %in% c("", "NULL"), ]$content <-
@@ -177,7 +164,6 @@ verifyResponse <- function(response) {
   return(df)
 }
 
-
 # ################################# #
 # Query all articles availables in NewsAPI
 # between a range of dates
@@ -203,7 +189,7 @@ getEverythingPerPage <- function(obj,
           wt = "json"
         )
       )
-    ) %plan% multicore
+    ) %plan% future::multicore
   } else {
     promise <- future::future(
       httr::GET(
@@ -220,7 +206,7 @@ getEverythingPerPage <- function(obj,
           wt = "json"
         )
       )
-    ) %plan% multicore
+    ) %plan% future::multicore
   }
 
   resp <- future::value(promise)
@@ -232,7 +218,7 @@ getEverythingPerPage <- function(obj,
     return(NULL)
   }
 
-  cadena <- stringr::str_replace_all(url_decode(obj$query), '\"', "")
+  cadena <- stringr::str_replace_all(urltools::url_decode(obj$query), '\"', "")
 
   if (obj$searchInTitles) {
     df_response <- df_response %>%
@@ -318,7 +304,7 @@ getTopHeadLines <-
             wt = "json"
           )
         )
-      ) %plan% multicore
+      ) %plan% future::multicore
     } else {
       promise <- future::future(
         httr::GET(
@@ -333,7 +319,7 @@ getTopHeadLines <-
             wt = "json"
           )
         )
-      ) %plan% multicore
+      ) %plan% future::multicore
     }
 
     resp <- future::value(promise)
@@ -345,10 +331,8 @@ getTopHeadLines <-
 
     if (is.null(df_response)) {
       return(NULL)
-    } else {
-      View(df_response)
     }
-
+    
     cadena <- stringr::str_replace_all(urltools::url_decode(obj$query), '\"', "")
 
     if (obj$searchInTitles) {
@@ -361,3 +345,18 @@ getTopHeadLines <-
 
     return(df_response)
   }
+
+# ################################# #
+
+# ################################# #
+getNews <- function(obj) {
+  if (isTRUE(obj$topNews)) {
+    df <- getTopHeadLines(obj)
+    return(df)
+  } else {
+    df <- getEverything(obj)
+    return(df)
+  }
+}
+
+#  })

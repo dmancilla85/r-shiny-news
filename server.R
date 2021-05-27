@@ -1,5 +1,5 @@
-source("./src/newsapi.R", local = TRUE, encoding = c("UTF-8"))
-source("./src/sentiment.R", local = TRUE, encoding = c("UTF-8"))
+source("./R/newsapi.R", local = TRUE, encoding = c("UTF-8"))
+source("./R/sentiment.R", local = TRUE, encoding = c("UTF-8"))
 
 # Define server logic
 server <- function(input, output, session) {
@@ -19,6 +19,7 @@ server <- function(input, output, session) {
 
   # TODO: revisar validez del analisis de sentimiento
   values <- shiny::reactiveValues()
+  values$is_empty <- TRUE
 
   shiny::observeEvent(input$btn_start, {
     values$date_range <- shiny::isolate(input$dt_fechas)
@@ -48,33 +49,72 @@ server <- function(input, output, session) {
       )
 
       values$df_req <- getNews(newsApi)
+
+      if (is.null(values$df_req) || nrow(values$df_req) == 0) {
+        values$is_empty <- TRUE
+        js_string <- 'alert("No hay resultados");'
+        session$sendCustomMessage(type = "jsCode", list(
+          value = js_string
+        ))
+      } else {
+        values$is_empty <- FALSE
+      }
     }
   })
 
   output$plt_sentiment <- shiny::renderPlot({
-    title <- stringr::str_to_title(values$caption_txt)
-    subtitle <- stringr::str_interp("Artículos que contienen la palabra ${title}")
+    title <- stringr::str_to_title(
+      stringr::str_interp("Palabra buscada: ${values$caption_txt}")
+    )
+    subtitle <- stringr::str_interp("Análisis de sentimiento NRC (Emoción - Lexicon)")
 
-    if (is.null(values$df_req)) {
+    if (values$is_empty) {
       ggplot2::ggplot() +
         ggplot2::geom_blank()
     }
     else {
-      if (dim(values$df_req)[1] == 0) {
-        js_string <- 'alert("No hay resultados");'
-        session$sendCustomMessage(type = "jsCode", list(value = js_string))
-        ggplot2::ggplot() +
-          ggplot2::geom_blank()
-      }
-      else {
-        # show plot
-        nrc <- processWithNRC(values$df_req, values$lang)
-        plotSentiment(nrc, title = title, subtitle = subtitle)
-      }
+      # show plot
+      
+      
+      nrc <- processWithNRC(values$df_req, values$lang)
+      
+      View(head(nrc))
+      
+      plotSentiment(nrc, title = title, subtitle = subtitle)
     }
   })
 
-  output$tbl_sentiment <- renderDataTable({
-    input$btn_start
+  output$tbl_sentiment <- DT::renderDataTable({
+    if (values$is_empty) {
+      DT::datatable(NULL)
+    } else {
+      df_formatted <- values$df_req
+      df_formatted$Imagen <- paste0(
+        "<a href='", df_formatted$url, "'>",
+        "<img src=", df_formatted$urlToImage,
+        " height=64></img></a>"
+      )
+      df_formatted$urlToImage <- NULL
+
+      df_formatted %>%
+        select("Título" = title, Imagen, "Fuente" = source.name, "Descripción" = description) %>%
+        DT::datatable(
+          escape = FALSE,
+          rownames = FALSE,
+          class = "compact stripe",
+          style = "bootstrap",
+          selection = "none",
+          options = list(
+            dom = "tip",
+            language = list(url = "//cdn.datatables.net/plug-ins/1.10.11/i18n/Spanish.json"),
+            initComplete = DT::JS(
+              "function(settings, json) {",
+              "$(this.api().table().header()).css({'background-color': '#000', 'color': '#fff', 'font-size':'11px'});",
+              "$(this.api().table().body()).css({'background-color': '#C6B3B9', 'color': '#000', 'font-size':'10px'});",
+              "}"
+            )
+          )
+        )
+    }
   })
 }

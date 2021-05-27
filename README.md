@@ -1,0 +1,1 @@
+Aplicación para el análisis de sentimiento

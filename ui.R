@@ -1,4 +1,4 @@
-source("./src/sidebar.R", local = TRUE, encoding = c("UTF-8"))
+source("./R/sidebar.R", local = TRUE, encoding = c("UTF-8"))
 
 
 linebreaks <- function(n) {
@@ -27,8 +27,17 @@ ui <- shiny::fluidPage(
 
     # Show a plot of the generated distribution
     mainPanel = shiny::mainPanel(
-      shinycustomloader::withLoader(plotOutput(outputId = "plt_sentiment")),
-      shinycustomloader::withLoader(dataTableOutput(outputId = "tbl_sentiment"))
+      fluidRow(
+        shinydashboard::box(
+          width = 12,
+          shinycustomloader::withLoader(plotOutput(outputId = "plt_sentiment"))
+        ),
+        shinydashboard::box(
+          title = "",
+          width = 12,
+          shinycustomloader::withLoader(DT::dataTableOutput(outputId = "tbl_sentiment"))
+        )
+      )
     )
   )
 )

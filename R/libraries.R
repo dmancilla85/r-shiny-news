@@ -1,3 +1,8 @@
+# wahani Modules
+if (!require(modules)) {
+  install.packages("modules")
+  library(modules)
+}
 
 # Sentiment Analysis
 if (!require(syuzhet)) {
@@ -5,7 +10,7 @@ if (!require(syuzhet)) {
   library(syuzhet)
 }
 
-# Sentiment Analysis
+# Shiny framework
 if (!require(shiny)) {
   install.packages("shiny")
   library(shiny)

@@ -1,3 +1,12 @@
+
+supported_langs <- c("basque", "catalan", "danish", "dutch", "en" = "english", 
+                     "esperanto", "finnish", "french", "german", "irish", "italian", 
+                     "latin", "portuguese", "romanian", "somali", "es" = "spanish", 
+                     "sudanese", "swahili", "swedish", "turkish", "vietnamese", "welsh", 
+                     "zulu")
+
+
+
 # ################################# #
 processWithNRC <- function(df, lang = "es", target = "content") {
   df$id <- (1:nrow(df))
@@ -54,9 +63,9 @@ processWithNRC <- function(df, lang = "es", target = "content") {
 
 # ################################# #
 plotSentiment <- function(df, title, subtitle) {
-  
-  msg <- "Basado en Syuzhet package y NRC (https://cran.r-project.org/web/packages/syuzhet)"
-  
+  msg <- paste0("Basado en package syuzhet (https://cran.r-project.org/web/packages/syuzhet)",
+                " y NRC Emotion Lexicon (https://saifmohammad.com/WebPages/NRC-Emotion-Lexicon.htm)")
+
   nrc <-
     tidyr::pivot_longer(
       df,

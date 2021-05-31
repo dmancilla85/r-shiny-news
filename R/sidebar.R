@@ -4,45 +4,59 @@ mySidebarPanel <- # Sidebar with a slider input for number of bins
     shiny::sidebarPanel(
       shiny::selectInput(
         inputId = "sel_language",
-        label = "Idioma",
+        label = i18n$t("Language"),
+        # choices = i18n$get_languages(),
+        selected = i18n$get_key_translation(),
         choices = c(
           "Español" = "es",
-          "Inglés" = "en"
+          "English" = "en",
+          "Arab" = "ar",
+          "Deutsche" = "de"
         ),
-        selected = "es"
       ),
       checkboxInput(
-        inputId = "chk_latest_news", label = "Sólo últimas noticias",
+        inputId = "chk_latest_news", label = i18n$t("Top headlines"),
         value = TRUE
       ),
       shiny::conditionalPanel(
         condition = "input.chk_latest_news == true",
         selectInput(
           inputId = "sel_country",
-          label = "País",
+          label = i18n$t("Country"),
           selected = "ar",
           choices = c(
             "Argentina" = "ar",
             "Chile" = "cl",
             "Brasil" = "br",
             "Paraguay" = "py",
-            "Estados Unidos" = "us"
+            "United States" = "us"
           )
         ),
         shiny::selectInput(
           inputId = "sel_category",
-          label = "Categoría",
+          label = i18n$t("Category"),
           selected = "*",
+          selectize = T,
           choices = c(
-            "Todas" = "*",
+            "All" = "*",
             "General" = "general",
-            "Negocios" = "business",
-            "Entretenimiento" = "entertainment",
-            "Salud" = "health",
-            "Ciencia" = "science",
-            "Deportes" = "sports",
-            "Tecnología" = "technology"
+            "Business" = "business",
+            "Entertainment" = "entertainment",
+            "Health" = "health",
+            "Science" = "science",
+            "Sports" = "sports",
+            "Technology" = "technology"
           )
+          %>% stats::setNames(nm = c(
+              i18n$t("All")$children[[1]],
+              i18n$t("General")$children[[1]],
+              i18n$t("Business")$children[[1]],
+              i18n$t("Entertainment")$children[[1]],
+              i18n$t("Health")$children[[1]],
+              i18n$t("Science")$children[[1]],
+              i18n$t("Sports")$children[[1]],
+              i18n$t("Technology")$children[[1]]
+            ))
         )
       ),
       shiny::conditionalPanel(
@@ -50,20 +64,20 @@ mySidebarPanel <- # Sidebar with a slider input for number of bins
         uiOutput(outputId = "dt_fechas"),
         checkboxInput(
           inputId = "chk_search_titles",
-          label = "Buscar en títulos",
-          value = TRUE
+          label = i18n$t("Search in headlines"),
+          value = FALSE
         )
       ),
       shiny::textInput(
         inputId = "txt_caption",
-        label = "Frase a buscar",
+        label = i18n$t("Word to search"),
         value = NULL,
-        placeholder = "Ingrese una palabra específica"
+        placeholder = ""
       ),
-      shiny::actionButton(inputId = "btn_start", label = "Buscar"),
+      shiny::actionButton(inputId = "btn_start", label = i18n$t("Search")),
       shiny::conditionalPanel(
         condition = "$('html').hasClass('shiny-busy')",
-        tags$div("Cargando...", id = "loadmessage")
+        tags$div(i18n$t("Loading..."), id = "loadmessage")
       )
     )
   }

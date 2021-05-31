@@ -6,6 +6,14 @@ h2 {
   font-family: "Merienda", cursive;
 }
 
+.modal-body {
+  font-weight: bold;
+  font-size: 20px;
+  color: #b2481b;
+  text-align: center;
+  font-family: "Merienda";
+}
+
 .shiny-plot.output {
 	border-radius: 20px;
 	border: 10px;

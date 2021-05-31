@@ -1,5 +1,7 @@
 source("./R/newsapi.R", local = TRUE, encoding = c("UTF-8"))
 source("./R/sentiment.R", local = TRUE, encoding = c("UTF-8"))
+library(dplyr)
+library(future)
 
 obj <- NewsApi(
   # Language

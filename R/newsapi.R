@@ -1,5 +1,12 @@
 
-#news <- modules::module({
+# news_api <- modules::module({
+#   import("methods")
+#   import("future")
+#   import("httr")
+#   import("dplyr")
+#   import("stringr")
+#   import("jsonlite")
+#   import("urltools")
 
 # NewsApi configuration object
 NewsApi <- setRefClass(
@@ -28,7 +35,7 @@ NewsApi <- setRefClass(
                           p_searchInTitles = FALSE,
                           p_topNews = FALSE,
                           p_category = "general") {
-      .self$token <- "f4a88e83555a4ffd91669835d38efedf"
+      .self$token <- Sys.getenv("NEWS_API_TOKEN")
       .self$pageSize <- p_pageSize
       .self$country <- p_country
       .self$language <- p_language
@@ -58,20 +65,25 @@ newsApiCategories <-
   )
 
 
-# ### FUNCTIONS ### #
 
-# ################################# #
+# Functions ---------------------------------------------------------------
 
-# ################################# #
+
+
+#' Shows errors in a normalized format
+#'
+#' This is a generic function to display errors.
+#'
 showError <- function(err, type = "Error:") {
   print(paste(type, err$message))
   print(paste("Call:", err$call))
 }
 
 
-# ################################# #
-
-# ################################# #
+#' Converts the JSON response to a dataframe
+#'
+#' This function converts the JSON response to a single dataframe.
+#'
 convertFromJSON <- function(request) {
   json_top <- jsonlite::toJSON(
     request$articles,
@@ -89,6 +101,15 @@ convertFromJSON <- function(request) {
       simplifyVector = T
     )
 
+  return(df_request)
+}
+
+
+#' Cleans and format the dataframe
+#'
+#' This function cleans the dataframe, and remove the useless fields.
+#'
+cleanAndFormat <- function(df_request) {
   # Cleaning data and format news API
   df_request$author <- NULL
   df_request$source.id <- NULL
@@ -129,9 +150,10 @@ convertFromJSON <- function(request) {
   return(df_request)
 }
 
-# ################################# #
-
-# ################################# #
+#' Verifies the API response
+#'
+#' This function verifies the API response and his status.
+#'
 verifyResponse <- function(response) {
   if (response$totalResults == 0) {
     return(NULL)
@@ -152,6 +174,7 @@ verifyResponse <- function(response) {
       print(paste("Current status is", response$status))
     } else {
       df <- convertFromJSON(response)
+      df <- cleanAndFormat(df)
     },
     warning = function(err) {
       showError(err, "Warning")
@@ -164,10 +187,10 @@ verifyResponse <- function(response) {
   return(df)
 }
 
-# ################################# #
-# Query all articles availables in NewsAPI
-# between a range of dates
-# ################################# #
+#' Get everything per page
+#'
+#' Query a page of articles available in NewsAPI between a date range.
+#'
 getEverythingPerPage <- function(obj,
                                  currentPage = 1) {
   ep_everything <- "https://newsapi.org/v2/everything"
@@ -231,9 +254,10 @@ getEverythingPerPage <- function(obj,
   return(df_response)
 }
 
-# ################################# #
-
-# ################################# #
+#' Get everything available in news
+#'
+#' Query all articles available in NewsAPI between a date range.
+#'
 getEverything <- function(obj,
                           freeAccountMode = TRUE) {
   df_request <- getEverythingPerPage(obj, 1)
@@ -284,9 +308,10 @@ getEverything <- function(obj,
 }
 
 
-# ################################# #
-# Retrieve newest headlines from News API
-# ################################# #
+#' Get newest headlines in news
+#'
+#' Retrieve newest headlines from News API.
+#'
 getTopHeadLines <-
   function(obj) {
     ep_top_headlines <- "https://newsapi.org/v2/top-headlines"
@@ -332,7 +357,7 @@ getTopHeadLines <-
     if (is.null(df_response)) {
       return(NULL)
     }
-    
+
     cadena <- stringr::str_replace_all(urltools::url_decode(obj$query), '\"', "")
 
     if (obj$searchInTitles) {
@@ -346,9 +371,11 @@ getTopHeadLines <-
     return(df_response)
   }
 
-# ################################# #
 
-# ################################# #
+#' Get news invoker
+#'
+#' Retrieve newest headlines or everything from News API.
+#'
 getNews <- function(obj) {
   if (isTRUE(obj$topNews)) {
     df <- getTopHeadLines(obj)
@@ -359,4 +386,5 @@ getNews <- function(obj) {
   }
 }
 
-#  })
+#   export("NewsApi","getNews")
+# })

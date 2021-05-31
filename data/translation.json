@@ -1,19 +1,256 @@
 {
-  "languages": ["en", "es"],
-  "translation": [
-      {"en": "Hello Shiny!", "es": "Witaj Shiny!"},
-      {"en": "Number of bins:", "es": "Liczba podziałek"},
-      {
-        "en": "This is description of the plot.",
-        "es": "To jest opis obrazka."
-      },
-      {
-        "en": "Histogram of x",
-        "es": "Histogram x"
-      },
-      {
-        "en": "Frequency",
-        "es": "Częstotliwość"
-      }
-    ]
+	"languages": [
+		"en",
+		"es",
+		"ar",
+		"de"
+	],
+	"translation": [
+		{
+			"en": "Sentiment analysis on news",
+			"ar": "تحليل المعنويات على الأخبار",
+			"de": "Stimmungsanalyse in nachrichten",
+			"es": "Análisis de sentimiento en noticias"
+		},
+		{
+			"en": "Language",
+			"ar": "لغة",
+			"de": "Sprache",
+			"es": "Idioma"
+		},
+		{
+			"en": "Spanish",
+			"ar": "الأسبانية",
+			"de": "Spanisch",
+			"es": "Español"
+		},
+		{
+			"en": "English",
+			"ar": "الإنجليزية",
+			"de": "Englisch",
+			"es": "Inglés"
+		},
+		{
+			"en": "Top headlines",
+			"ar": "أهم العناوين",
+			"de": "Top schlagzeilen",
+			"es": "Titulares principales"
+		},
+		{
+			"en": "Country",
+			"ar": "بلد",
+			"de": "Land",
+			"es": "País"
+		},
+		{
+			"en": "Category",
+			"ar": "الفئة",
+			"de": "Kategorie",
+			"es": "Categoría"
+		},
+		{
+			"en": "All",
+			"ar": "الكل",
+			"de": "Alle",
+			"es": "Todas"
+		},
+		{
+			"en": "General",
+			"ar": "جنرال لواء",
+			"de": "Allgemeines",
+			"es": "General"
+		},
+		{
+			"en": "Business",
+			"ar": "اعمال",
+			"de": "Unternehmen",
+			"es": "Negocios"
+		},
+		{
+			"en": "Entertainment",
+			"ar": "وسائل الترفيه",
+			"de": "Unterhaltung",
+			"es": "Entretenimiento"
+		},
+		{
+			"en": "Health",
+			"ar": "صحة",
+			"de": "Gesundheit",
+			"es": "Salud"
+		},
+		{
+			"en": "Science",
+			"ar": "علم",
+			"de": "Wissenschaft",
+			"es": "Ciencia"
+		},
+		{
+			"en": "Sports",
+			"ar": "رياضات",
+			"de": "Sport",
+			"es": "Deportes"
+		},
+		{
+			"en": "Technology",
+			"ar": "تقنية",
+			"de": "Technologie",
+			"es": "Tecnología"
+		},
+		{
+			"en": "Search in headlines",
+			"ar": "ابحث في العناوين",
+			"de": "In schlagzeilen suchen",
+			"es": "Buscar en títulares"
+		},
+		{
+			"en": "Any language",
+			"ar": "أي لغة",
+			"de": "Jede Sprache",
+			"es": "Cualquier idioma"
+		},
+		{
+			"en": "Word to search",
+			"ar": "كلمة للبحث",
+			"de": "Wort zu suchen",
+			"es": "Palabra a buscar"
+		},
+		{
+			"en": "Enter a specific word",
+			"ar": "أدخل كلمة معينة",
+			"de": "Geben sie ein bestimmtes wort ein",
+			"es": "Ingrese una palabra específica"
+		},
+		{
+			"en": "Loading...",
+			"ar": "جارٍ الشحن ...",
+			"de": "Aufladen ...",
+			"es": "Cargando..."
+		},
+		{
+			"en": "Search",
+			"ar": "بحث",
+			"de": "Suchen",
+			"es": "Buscar"
+		},
+		{
+			"en": "Date range:",
+			"ar": "نطاق الموعد:",
+			"de": "Datumsbereich:",
+			"es": "Rango de fechas:"
+		},
+		{
+			"en": "mm/dd/yy",
+			"ar": "dd/mm/yy",
+			"de": "dd/mm/yy",
+			"es": "dd/mm/yy"
+		},
+		{
+			"en": "No results",
+			"ar": "لا نتائج",
+			"de": "Keine ergebnisse",
+			"es": "No hay resultados"
+		},
+		{
+			"en": "Searched word",
+			"ar": "كلمة بحثت",
+			"de": "Gesuchtes wort",
+			"es": "Palabra buscada"
+		},
+		{
+			"en": "NRC Sentiment Analysis (Emotion-Lexicon)",
+			"ar": "تحليل المشاعر NRC (العاطفة - المعجم)",
+			"de": "NRC-Stimmungsanalyse (Emotion - Lexikon)",
+			"es": "Análisis de Sentimiento NRC (Emoción - Lexicon)"
+		},
+		{
+			"en": "Title",
+			"ar": "مؤهل",
+			"de": "Qualifikation",
+			"es": "Título"
+		},
+		{
+			"en": "Source",
+			"ar": "مصدر",
+			"de": "Quelle",
+			"es": "Fuente"
+		},
+		{
+			"en": "Description",
+			"ar": "وصف",
+			"de": "Beschreibung",
+			"es": "Descripción"
+		},
+		{
+			"en": "Image",
+			"ar": "صورة",
+			"de": "Bild",
+			"es": "Imagen"
+		},
+		{
+			"en": "Based on package syuzhet (https://cran.r-project.org/web/packages/syuzhet) and NRC EmoLex (https://saifmohammad.com/WebPages/NRC-Emotion-Lexicon.htm)",
+			"ar": "بناءً على حزمة syuzhet (https://cran.r-project.org/web/packages/syuzhet) و NRC EmoLex (https://saifmohammad.com/WebPages/NRC-Emotion-Lexicon.htm)",
+			"de": "Basierend auf paket syuzhet (https://cran.r-project.org/web/packages/syuzhet) und NRC EmoLex (https://saifmohammad.com/WebPages/NRC-Emotion-Lexicon.htm)",
+			"es": "Basado en package syuzhet (https://cran.r-project.org/web/packages/syuzhet) y NRC EmoLex (https://saifmohammad.com/WebPages/NRC-Emotion-Lexicon.htm)"
+		},
+		{
+			"en": "Anger",
+			"ar": "اذهب إلى",
+			"de": "Gehe zu",
+			"es": "Ira"
+		},
+		{
+			"en": "Anticipation",
+			"ar": "توقع",
+			"de": "Erwartung",
+			"es": "Expectativa"
+		},
+		{
+			"en": "Disgust",
+			"ar": "الاشمئزاز",
+			"de": "Der ekel",
+			"es": "Desagrado"
+		},
+		{
+			"en": "Fear",
+			"ar": "خائف",
+			"de": "Angst",
+			"es": "Miedo"
+		},
+		{
+			"en": "Joy",
+			"ar": "مرح",
+			"de": "Freude",
+			"es": "Alegría"
+		},
+		{
+			"en": "Sadness",
+			"ar": "حزن",
+			"de": "Traurigkeit",
+			"es": "Tristeza"
+		},
+		{
+			"en": "Surprise",
+			"ar": "مفاجئة",
+			"de": "Überraschung",
+			"es": "Sorpresa"
+		},
+		{
+			"en": "Sentiment",
+			"ar": "إحساس",
+			"de": "Gefühl",
+			"es": "Sentimiento"
+		},
+		{
+			"en": "NRC Score",
+			"ar": "نتيجة NRC",
+			"de": "NRC-Punktzahl",
+			"es": "Puntaje NRC"
+		},
+		{
+			"en": "English.json",
+			"ar": "Arabic.json",
+			"de": "German.json",
+			"es": "Spanish.json"
+		}
+	]
 }

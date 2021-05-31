@@ -1,17 +1,21 @@
-source("./R/newsapi.R", local = TRUE, encoding = c("UTF-8"))
-source("./R/sentiment.R", local = TRUE, encoding = c("UTF-8"))
 
 # Define server logic
 server <- function(input, output, session) {
+
+  # internationalization
+  observeEvent(input$sel_language, {
+    shiny.i18n::update_lang(session, input$sel_language)
+  })
+
   output$dt_fechas <- shiny::renderUI({
     shiny::dateRangeInput(
       inputId = "dt_fechas",
-      label = "Rango de fechas:",
+      label = i18n$t("Date range:"),
       min = Sys.Date() - 3,
       start = Sys.Date() - 3,
       max = Sys.Date(),
       end = Sys.Date(),
-      format = "dd/mm/yy",
+      format = i18n$t("mm/dd/yy"),
       language = input$sel_language,
       separator = " - "
     )
@@ -29,6 +33,7 @@ server <- function(input, output, session) {
     values$category <- shiny::isolate(input$sel_category)
     values$top_news <- shiny::isolate(input$chk_latest_news)
     values$titles <- shiny::isolate(input$chk_search_titles)
+    values$all_langs <- shiny::isolate(input$chk_all_languages)
 
 
     if (!is.null(values$date_range) &
@@ -52,9 +57,13 @@ server <- function(input, output, session) {
 
       if (is.null(values$df_req) || nrow(values$df_req) == 0) {
         values$is_empty <- TRUE
-        js_string <- 'alert("No hay resultados");'
-        session$sendCustomMessage(type = "jsCode", list(
-          value = js_string
+        empty_msg <- i18n$t("No results")
+
+        showModal(modalDialog(
+          shiny::renderText(empty_msg),
+          easyClose = TRUE,
+          footer = NULL,
+          size = "m"
         ))
       } else {
         values$is_empty <- FALSE
@@ -64,9 +73,9 @@ server <- function(input, output, session) {
 
   output$plt_sentiment <- shiny::renderPlot({
     title <- stringr::str_to_title(
-      stringr::str_interp("Palabra buscada: ${values$caption_txt}")
+      stringr::str_interp(str_interp("${i18n$t('Searched word')}: ${values$caption_txt}"))
     )
-    subtitle <- stringr::str_interp("Análisis de sentimiento NRC (Emoción - Lexicon)")
+    subtitle <- i18n$t("NRC Sentiment Analysis (Emotion-Lexicon)")
 
     if (values$is_empty) {
       ggplot2::ggplot() +
@@ -74,13 +83,9 @@ server <- function(input, output, session) {
     }
     else {
       # show plot
-      
-      
       nrc <- processWithNRC(values$df_req, values$lang)
-      
-      View(head(nrc))
-      
-      plotSentiment(nrc, title = title, subtitle = subtitle)
+
+      plotSentiment(nrc, title = title, subtitle = subtitle, translator = i18n)
     }
   })
 
@@ -97,7 +102,8 @@ server <- function(input, output, session) {
       df_formatted$urlToImage <- NULL
 
       df_formatted %>%
-        select("Título" = title, Imagen, "Fuente" = source.name, "Descripción" = description) %>%
+        select("Title" = title, "Image" = Imagen, "Source" = source.name, "Description" = description) %>%
+        rename_all(i18n$t) %>%
         DT::datatable(
           escape = FALSE,
           rownames = FALSE,
@@ -106,7 +112,10 @@ server <- function(input, output, session) {
           selection = "none",
           options = list(
             dom = "tip",
-            language = list(url = "//cdn.datatables.net/plug-ins/1.10.11/i18n/Spanish.json"),
+            language = list(
+              url =
+                stringr::str_interp("//cdn.datatables.net/plug-ins/1.10.11/i18n/${i18n$t('English.json')}")
+            ),
             initComplete = DT::JS(
               "function(settings, json) {",
               "$(this.api().table().header()).css({'background-color': '#000', 'color': '#fff', 'font-size':'11px'});",

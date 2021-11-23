@@ -4,7 +4,7 @@
 #' This function generates n line breaks.
 #'
 linebreaks <- function(n) {
-  HTML(strrep(br(), n))
+  htmltools::HTML(strrep(htmltools::br(), n))
 }
 
 # Define UI for application that draws a histogram
@@ -14,17 +14,17 @@ ui <- shiny::fluidPage(
   add_busy_spinner(spin = "breeding-rhombus", margins = c(30, 30), color = "lightblue"),
   theme = "custom.css",
   # Application title
-  singleton(tags$head(tags$script(
-    HTML(
+  htmltools::singleton(htmltools::tags$head(htmltools::tags$script(
+    htmltools::HTML(
       'Shiny.addCustomMessageHandler("jsCode",function(message) {eval(message.value);});'
     )
   ))),
-  tags$head(
-    tags$link(rel = "preconnect", href = "https://fonts.gstatic.com"),
-    tags$link(rel = "stylesheet", href = "https://fonts.googleapis.com/css2?family=Merienda&display=swap")
+  htmltools::tags$head(
+    htmltools::tags$link(rel = "preconnect", href = "https://fonts.gstatic.com"),
+    htmltools::tags$link(rel = "stylesheet", href = "https://fonts.googleapis.com/css2?family=Merienda&display=swap")
   ),
   titlePanel(
-    title = HTML(stringr::str_interp('<b>${i18n$t("Sentiment analysis on news")}</b>')),
+    title = htmltools::HTML(stringr::str_interp('<b>${i18n$t("Sentiment analysis on news")}</b>')),
     windowTitle = "Sentiment Analysis"
   ),
   linebreaks(1),

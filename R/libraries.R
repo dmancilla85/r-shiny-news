@@ -6,6 +6,11 @@
 loadAllLibraries <- function() {
   print("Loading libraries...")
 
+  if (!require(extrafont)) {
+    install.packages("extrafont")
+    library(extrafont)
+  }
+  
   if (!require(shinybusy)) {
     install.packages("shinybusy")
     library(shinybusy)
@@ -15,7 +20,6 @@ loadAllLibraries <- function() {
     install.packages("tm")
     library(tm)
   }
-
 
   if (!require(shiny.i18n)) {
     install.packages("shiny.i18n")

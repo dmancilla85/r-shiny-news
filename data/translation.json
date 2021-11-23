@@ -3,254 +3,464 @@
 		"en",
 		"es",
 		"ar",
-		"de"
+		"de",
+		"fr",
+		"pt",
+		"it",
+		"nl",
+		"no"
 	],
 	"translation": [
 		{
 			"en": "Sentiment analysis on news",
 			"ar": "تحليل المعنويات على الأخبار",
 			"de": "Stimmungsanalyse in nachrichten",
-			"es": "Análisis de sentimiento en noticias"
+			"es": "Análisis de sentimiento en noticias",
+			"fr": "Analyse des sentiments dans l'actualité",
+			"pt": "Análise de sentimento nas notícias",
+			"it": "<pendiente>",
+		  "nl": "<pendiente>",
+		  "no": "<pendiente>"
 		},
 		{
 			"en": "Language",
 			"ar": "لغة",
 			"de": "Sprache",
-			"es": "Idioma"
+			"es": "Idioma",
+			"fr": "Langage",
+			"pt": "Idioma",
+			"it": "<pendiente>",
+		  "nl": "<pendiente>",
+		  "no": "<pendiente>"
 		},
 		{
 			"en": "Spanish",
 			"ar": "الأسبانية",
 			"de": "Spanisch",
-			"es": "Español"
+			"es": "Español",
+			"fr": "Espanol",
+			"pt": "Espanhol",
+			"it": "<pendiente>",
+		  "nl": "<pendiente>",
+		  "no": "<pendiente>"
 		},
 		{
 			"en": "English",
 			"ar": "الإنجليزية",
 			"de": "Englisch",
-			"es": "Inglés"
+			"es": "Inglés",
+			"fr": "Anglais",
+			"pt": "Inglês",
+			"it": "<pendiente>",
+		  "nl": "<pendiente>",
+		  "no": "<pendiente>"
 		},
 		{
 			"en": "Top headlines",
 			"ar": "أهم العناوين",
 			"de": "Top schlagzeilen",
-			"es": "Titulares principales"
+			"es": "Titulares principales",
+			"fr": "Gros titres",
+			"pt": "Manchetes principais",
+			"it": "<pendiente>",
+		  "nl": "<pendiente>",
+		  "no": "<pendiente>"
 		},
 		{
 			"en": "Country",
 			"ar": "بلد",
 			"de": "Land",
-			"es": "País"
+			"es": "País",
+			"fr": "Pays",
+			"pt": "País",
+			"it": "<pendiente>",
+		  "nl": "<pendiente>",
+		  "no": "<pendiente>"
 		},
 		{
 			"en": "Category",
 			"ar": "الفئة",
 			"de": "Kategorie",
-			"es": "Categoría"
+			"es": "Categoría",
+			"fr": "Catégorie",
+			"pt": "Categoria",
+			"it": "<pendiente>",
+		  "nl": "<pendiente>",
+		  "no": "<pendiente>"
 		},
 		{
 			"en": "All",
 			"ar": "الكل",
 			"de": "Alle",
-			"es": "Todas"
+			"es": "Todas",
+			"fr": "Toutes",
+			"pt": "Tudo",
+			"it": "<pendiente>",
+		  "nl": "<pendiente>",
+		  "no": "<pendiente>"
 		},
 		{
 			"en": "General",
 			"ar": "جنرال لواء",
 			"de": "Allgemeines",
-			"es": "General"
+			"es": "General",
+			"fr": "Général",
+			"pt": "Em geral",
+			"it": "<pendiente>",
+		  "nl": "<pendiente>",
+		  "no": "<pendiente>"
 		},
 		{
 			"en": "Business",
 			"ar": "اعمال",
 			"de": "Unternehmen",
-			"es": "Negocios"
+			"es": "Negocios",
+			"fr": "Affaires",
+			"pt": "O negócio",
+			"it": "<pendiente>",
+		  "nl": "<pendiente>",
+		  "no": "<pendiente>"
 		},
 		{
 			"en": "Entertainment",
 			"ar": "وسائل الترفيه",
 			"de": "Unterhaltung",
-			"es": "Entretenimiento"
+			"es": "Entretenimiento",
+			"fr": "Divertissement",
+			"pt": "Entretenimento",
+			"it": "<pendiente>",
+		  "nl": "<pendiente>",
+		  "no": "<pendiente>"
 		},
 		{
 			"en": "Health",
 			"ar": "صحة",
 			"de": "Gesundheit",
-			"es": "Salud"
+			"es": "Salud",
+			"fr": "Santé",
+			"pt": "Saúde",
+			"it": "<pendiente>",
+		  "nl": "<pendiente>",
+		  "no": "<pendiente>"
 		},
 		{
 			"en": "Science",
 			"ar": "علم",
 			"de": "Wissenschaft",
-			"es": "Ciencia"
+			"es": "Ciencia",
+			"fr": "Science",
+			"pt": "Ciência",
+			"it": "<pendiente>",
+		  "nl": "<pendiente>",
+		  "no": "<pendiente>"
 		},
 		{
 			"en": "Sports",
 			"ar": "رياضات",
 			"de": "Sport",
-			"es": "Deportes"
+			"es": "Deportes",
+			"fr": "Sport",
+			"pt": "Esportes",
+			"it": "<pendiente>",
+		  "nl": "<pendiente>",
+		  "no": "<pendiente>"
 		},
 		{
 			"en": "Technology",
 			"ar": "تقنية",
 			"de": "Technologie",
-			"es": "Tecnología"
+			"es": "Tecnología",
+			"fr": "Technologie",
+			"pt": "Tecnologia",
+			"it": "<pendiente>",
+		  "nl": "<pendiente>",
+		  "no": "<pendiente>"
 		},
 		{
-			"en": "Search in headlines",
+			"en": "Only analize headlines",
 			"ar": "ابحث في العناوين",
 			"de": "In schlagzeilen suchen",
-			"es": "Buscar en títulares"
+			"es": "Sólo analizar los títulares",
+			"fr": "Rechercher dans les titres",
+			"pt": "Pesquisar nas manchetes",
+			"it": "<pendiente>",
+		  "nl": "<pendiente>",
+		  "no": "<pendiente>"
 		},
 		{
 			"en": "Any language",
 			"ar": "أي لغة",
 			"de": "Jede Sprache",
-			"es": "Cualquier idioma"
+			"es": "Cualquier idioma",
+			"fr": "Toutes les langues",
+			"pt": "Qualquer língua",
+			"it": "<pendiente>",
+		  "nl": "<pendiente>",
+		  "no": "<pendiente>"
 		},
 		{
 			"en": "Word to search",
 			"ar": "كلمة للبحث",
 			"de": "Wort zu suchen",
-			"es": "Palabra a buscar"
+			"es": "Palabra a buscar",
+			"fr": "Mot à rechercher",
+			"pt": "Palavra para pesquisar",
+			"it": "<pendiente>",
+		  "nl": "<pendiente>",
+		  "no": "<pendiente>"
 		},
 		{
 			"en": "Enter a specific word",
 			"ar": "أدخل كلمة معينة",
 			"de": "Geben sie ein bestimmtes wort ein",
-			"es": "Ingrese una palabra específica"
+			"es": "Ingrese una palabra específica",
+			"fr": "Entrez un mot spécifique",
+			"pt": "Insira uma palavra específica",
+			"it": "<pendiente>",
+		  "nl": "<pendiente>",
+		  "no": "<pendiente>"
 		},
 		{
 			"en": "Loading...",
 			"ar": "جارٍ الشحن ...",
 			"de": "Aufladen ...",
-			"es": "Cargando..."
+			"es": "Cargando...",
+			"fr": "Mise en charge...",
+			"pt": "Carregando ...",
+			"it": "<pendiente>",
+		  "nl": "<pendiente>",
+		  "no": "<pendiente>"
 		},
 		{
 			"en": "Search",
 			"ar": "بحث",
 			"de": "Suchen",
-			"es": "Buscar"
+			"es": "Buscar",
+			"fr": "Chercher",
+			"pt": "Procurar",
+			"it": "<pendiente>",
+		  "nl": "<pendiente>",
+		  "no": "<pendiente>"
 		},
 		{
 			"en": "Date range:",
 			"ar": "نطاق الموعد:",
 			"de": "Datumsbereich:",
-			"es": "Rango de fechas:"
+			"es": "Rango de fechas:",
+			"fr": "Plage de dates:",
+			"pt": "Intervalo de datas:",
+			"it": "<pendiente>",
+		  "nl": "<pendiente>",
+		  "no": "<pendiente>"
 		},
 		{
 			"en": "mm/dd/yy",
 			"ar": "dd/mm/yy",
 			"de": "dd/mm/yy",
-			"es": "dd/mm/yy"
+			"es": "dd/mm/yy",
+			"fr": "dd/mm/yy",
+			"pt": "dd/mm/yy",
+			"it": "<pendiente>",
+		  "nl": "<pendiente>",
+		  "no": "<pendiente>"
 		},
 		{
 			"en": "No results",
 			"ar": "لا نتائج",
 			"de": "Keine ergebnisse",
-			"es": "No hay resultados"
+			"es": "No hay resultados",
+			"fr": "Il n'y a pas de résultats",
+			"pt": "Não há resultados",
+			"it": "<pendiente>",
+		  "nl": "<pendiente>",
+		  "no": "<pendiente>"
 		},
 		{
 			"en": "Searched word",
 			"ar": "كلمة بحثت",
 			"de": "Gesuchtes wort",
-			"es": "Palabra buscada"
+			"es": "Palabra buscada",
+			"fr": "Mot recherché",
+			"pt": "Palavra pesquisada",
+			"it": "<pendiente>",
+		  "nl": "<pendiente>",
+		  "no": "<pendiente>"
 		},
 		{
 			"en": "NRC Sentiment Analysis (Emotion-Lexicon)",
 			"ar": "تحليل المشاعر NRC (العاطفة - المعجم)",
 			"de": "NRC-Stimmungsanalyse (Emotion - Lexikon)",
-			"es": "Análisis de Sentimiento NRC (Emoción - Lexicon)"
+			"es": "Análisis de Sentimiento NRC (Emoción - Lexicon)",
+			"fr": "Analyse des sentiments du CNRC (Émotion - Lexique)",
+			"pt": "Análise de sentimento do NRC (emoção - léxico)",
+			"it": "<pendiente>",
+		  "nl": "<pendiente>",
+		  "no": "<pendiente>"
 		},
 		{
 			"en": "Title",
 			"ar": "مؤهل",
 			"de": "Qualifikation",
-			"es": "Título"
+			"es": "Título",
+			"fr": "Titre",
+			"pt": "Título",
+			"it": "<pendiente>",
+		  "nl": "<pendiente>",
+		  "no": "<pendiente>"
 		},
 		{
 			"en": "Source",
 			"ar": "مصدر",
 			"de": "Quelle",
-			"es": "Fuente"
+			"es": "Fuente",
+			"fr": "Source",
+			"pt": "Origem",
+			"it": "<pendiente>",
+		  "nl": "<pendiente>",
+		  "no": "<pendiente>"
 		},
 		{
 			"en": "Description",
 			"ar": "وصف",
 			"de": "Beschreibung",
-			"es": "Descripción"
+			"es": "Descripción",
+			"fr": "Description",
+			"pt": "Descriçao",
+			"it": "<pendiente>",
+		  "nl": "<pendiente>",
+		  "no": "<pendiente>"
 		},
 		{
 			"en": "Image",
 			"ar": "صورة",
 			"de": "Bild",
-			"es": "Imagen"
+			"es": "Imagen",
+			"fr": "Image",
+			"pt": "Imagem",
+			"it": "<pendiente>",
+		  "nl": "<pendiente>",
+		  "no": "<pendiente>"
 		},
 		{
 			"en": "Based on package syuzhet (https://cran.r-project.org/web/packages/syuzhet) and NRC EmoLex (https://saifmohammad.com/WebPages/NRC-Emotion-Lexicon.htm)",
-			"ar": "بناءً على حزمة syuzhet (https://cran.r-project.org/web/packages/syuzhet) و NRC EmoLex (https://saifmohammad.com/WebPages/NRC-Emotion-Lexicon.htm)",
+			"ar": "بناءً على حزمة syuzhet (https://cran.r-project.org/web/packages/syuzhen و NRC EmoLex (https://saifmohammad.com/WebPages/NRC-Emotion-Lexicon.htm)",
 			"de": "Basierend auf paket syuzhet (https://cran.r-project.org/web/packages/syuzhet) und NRC EmoLex (https://saifmohammad.com/WebPages/NRC-Emotion-Lexicon.htm)",
-			"es": "Basado en package syuzhet (https://cran.r-project.org/web/packages/syuzhet) y NRC EmoLex (https://saifmohammad.com/WebPages/NRC-Emotion-Lexicon.htm)"
+			"es": "Basado en package syuzhet (https://cran.r-project.org/web/packages/syuzhet) y NRC EmoLex (https://saifmohammad.com/WebPages/NRC-Emotion-Lexicon.htm)",
+			"fr": "Basé sur le package syuzhet (https://cran.r-project.org/web/packages/syuzhet) et NRC EmoLex (https://saifmohammad.com/WebPages/NRC-Emotion-Lexicon.htm)",
+			"pt": "Com base no pacote syuzhet (https://cran.r-project.org/web/packages/syuzhet) e NRC EmoLex (https://saifmohammad.com/WebPages/NRC-Emotion-Lexicon.htm)",
+			"it": "<pendiente>",
+		  "nl": "<pendiente>",
+		  "no": "<pendiente>"
 		},
 		{
 			"en": "Anger",
 			"ar": "اذهب إلى",
 			"de": "Gehe zu",
-			"es": "Ira"
+			"es": "Ira",
+			"fr": "Colère",
+			"pt": "Raiva",
+			"it": "<pendiente>",
+		  "nl": "<pendiente>",
+		  "no": "<pendiente>"
 		},
 		{
 			"en": "Anticipation",
 			"ar": "توقع",
 			"de": "Erwartung",
-			"es": "Expectativa"
+			"es": "Expectativa",
+			"fr": "Attente",
+			"pt": "Expectativa",
+			"it": "<pendiente>",
+		  "nl": "<pendiente>",
+		  "no": "<pendiente>"
 		},
 		{
 			"en": "Disgust",
 			"ar": "الاشمئزاز",
 			"de": "Der ekel",
-			"es": "Desagrado"
+			"es": "Desagrado",
+			"fr": "Aversion",
+			"pt": "Desprazer",
+			"it": "<pendiente>",
+		  "nl": "<pendiente>",
+		  "no": "<pendiente>"
 		},
 		{
 			"en": "Fear",
 			"ar": "خائف",
 			"de": "Angst",
-			"es": "Miedo"
+			"es": "Miedo",
+			"fr": "Peur",
+			"pt": "Medo",
+			"it": "<pendiente>",
+		  "nl": "<pendiente>",
+		  "no": "<pendiente>"
 		},
 		{
 			"en": "Joy",
 			"ar": "مرح",
 			"de": "Freude",
-			"es": "Alegría"
+			"es": "Alegría",
+			"fr": "Joie",
+			"pt": "Alegria",
+			"it": "<pendiente>",
+		  "nl": "<pendiente>",
+		  "no": "<pendiente>"
 		},
 		{
 			"en": "Sadness",
 			"ar": "حزن",
 			"de": "Traurigkeit",
-			"es": "Tristeza"
+			"es": "Tristeza",
+			"fr": "Tristesse",
+			"pt": "Tristeza",
+			"it": "<pendiente>",
+		  "nl": "<pendiente>",
+		  "no": "<pendiente>"
 		},
 		{
 			"en": "Surprise",
 			"ar": "مفاجئة",
 			"de": "Überraschung",
-			"es": "Sorpresa"
+			"es": "Sorpresa",
+			"fr": "Surprise",
+			"pt": "Surpresa",
+			"it": "<pendiente>",
+		  "nl": "<pendiente>",
+		  "no": "<pendiente>"
 		},
 		{
 			"en": "Sentiment",
 			"ar": "إحساس",
 			"de": "Gefühl",
-			"es": "Sentimiento"
+			"es": "Sentimiento",
+			"fr": "Sentiment",
+			"pt": "Sentimento",
+			"it": "<pendiente>",
+		  "nl": "<pendiente>",
+		  "no": "<pendiente>"
 		},
 		{
 			"en": "NRC Score",
 			"ar": "نتيجة NRC",
 			"de": "NRC-Punktzahl",
-			"es": "Puntaje NRC"
+			"es": "Puntaje NRC",
+			"fr": "Note du CNRC",
+			"pt": "Pontuação NRC",
+			"it": "<pendiente>",
+		  "nl": "<pendiente>",
+		  "no": "<pendiente>"
 		},
 		{
 			"en": "English.json",
 			"ar": "Arabic.json",
 			"de": "German.json",
-			"es": "Spanish.json"
+			"es": "Spanish.json",
+			"fr": "French.json",
+			"pt": "Portuguese.json",
+			"it": "<pendiente>",
+		  "nl": "<pendiente>",
+		  "no": "<pendiente>"
 		}
 	]
 }

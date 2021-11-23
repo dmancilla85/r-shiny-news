@@ -1,35 +1,56 @@
 
-supported_langs <- c("basque", "catalan", "danish", "dutch",
+supported_langs <- c(
+  "basque",
+  "catalan",
+  "no" = "danish",
+  "nl" = "dutch",
   "en" = "english",
-  "esperanto", "finnish", "french", "german", "irish", "italian",
-  "latin", "portuguese", "romanian", "somali", "es" = "spanish",
-  "sudanese", "swahili", "swedish", "turkish", "vietnamese", "welsh",
+  "esperanto",
+  "finnish",
+  "fr" = "french",
+  "de" = "german",
+  "irish",
+  "it" = "italian",
+  "latin",
+  "pt" = "portuguese",
+  "romanian",
+  "somali",
+  "es" = "spanish",
+  "sudanese",
+  "swahili",
+  "swedish",
+  "turkish",
+  "vietnamese",
+  "welsh",
   "zulu"
 )
+
+
 
 #' Get corpus document
 #'
 #' This function analyzes the news dataframe with the NRC method.
 #'
 getCorpus <- function(text_v, language) {
-  toSpace <- content_transformer(function(x, pattern) gsub(pattern, " ", x))
-
-  txt_new_corpus <- Corpus(VectorSource(text_v))
-
+  txt_new_corpus <- tm::Corpus(tm::VectorSource(text_v))
+  toSpace <- tm::content_transformer(function(x, pattern) gsub(pattern, " ", x))
+  
   # clean and tidy
-  txt_new_corpus <- tm_map(txt_new_corpus, toSpace, "/")
-  txt_new_corpus <- tm_map(txt_new_corpus, toSpace, "@")
-  txt_new_corpus <- tm_map(txt_new_corpus, toSpace, "\\|")
+  txt_new_corpus <- tm::tm_map(txt_new_corpus, toSpace, "/")
+  txt_new_corpus <- tm::tm_map(txt_new_corpus, toSpace, "\n")
+  txt_new_corpus <- tm::tm_map(txt_new_corpus, toSpace, "\r")
+  txt_new_corpus <- tm::tm_map(txt_new_corpus, toSpace, "@")
+  txt_new_corpus <- tm::tm_map(txt_new_corpus, toSpace, "\\|")
   # Convert the text to lower case
-  txt_new_corpus <- tm_map(txt_new_corpus, content_transformer(tolower))
+  txt_new_corpus <- tm::tm_map(txt_new_corpus, tm::content_transformer(tolower))
   # Remove numbers
-  txt_new_corpus <- tm_map(txt_new_corpus, removeNumbers)
+  txt_new_corpus <- tm::tm_map(txt_new_corpus, tm::removeNumbers)
   # Remove english common stopwords
-  txt_new_corpus <- tm_map(txt_new_corpus, removeWords, stopwords(language))
+  txt_new_corpus <- tm::tm_map(txt_new_corpus, tm::removeWords, tm::stopwords(language))
   # Remove punctuations
-  txt_new_corpus <- tm_map(txt_new_corpus, removePunctuation)
+  txt_new_corpus <- tm::tm_map(txt_new_corpus, tm::removePunctuation)
   # Eliminate extra white spaces
-  txt_new_corpus <- tm_map(txt_new_corpus, stripWhitespace)
+  txt_new_corpus <- tm::tm_map(txt_new_corpus, tm::stripWhitespace)
 
   return(txt_new_corpus)
 }
@@ -41,14 +62,15 @@ getCorpus <- function(text_v, language) {
 processWithNRC <- function(df, lang = "es", target = "content") {
   df$id <- (1:nrow(df))
 
-  language <- "spanish"
+  language <- supported_langs[lang]
 
-  if (lang == "es") {
-    language <- "spanish"
-  } else if (lang == "en") {
-    language <- "english"
-  }
-
+  df <- df %>% dplyr::mutate(content = stringr::str_replace(content, "/", " "))
+  df <- df %>% dplyr::mutate(content = stringr::str_replace(content, "\n", " "))
+  df <- df %>% dplyr::mutate(content = stringr::str_replace(content, "\r", " "))
+  df <- df %>% dplyr::mutate(content = stringr::str_replace(content, "@", " "))
+  df <- df %>% dplyr::mutate(content = stringr::str_replace(content, "\\|", " "))
+  df <- df %>% dplyr::mutate(content = stringr::str_replace(content, "...", " "))
+  df$content <- gsub('[0-9.]', '', df$content)
 
   # Collect all descriptions
   for (i in 1:nrow(df)) {
@@ -88,75 +110,4 @@ processWithNRC <- function(df, lang = "es", target = "content") {
   df <- df %>%
     dplyr::inner_join(df_nrc, by = c("id" = "id"), copy = TRUE)
   return(df)
-}
-
-#' Plot NRC results
-#'
-#' This function plots the sentiment analysis with NRC.
-#'
-plotSentiment <- function(df, title, subtitle, translator) {
-  caption <- translator$t(
-    paste0(
-      "Based on package syuzhet (https://cran.r-project.org/web/packages/syuzhet)",
-      " and NRC EmoLex (https://saifmohammad.com/WebPages/NRC-Emotion-Lexicon.htm)"
-    )
-  )
-
-  custom_theme <- ggplot2::theme(
-    strip.background = ggplot2::element_blank(),
-    panel.border = element_rect(fill = NA, color = "white"),
-    panel.grid.minor = element_blank(),
-    panel.grid = ggplot2::element_blank()
-  )
-  
-  nrc <-
-    tidyr::pivot_longer(
-      df,
-      cols = c(
-        "anger",
-        "anticipation",
-        "disgust",
-        "fear",
-        "joy",
-        "sadness",
-        "surprise",
-        "trust",
-        "negative",
-        "positive"
-      ),
-      names_to = "Sentimiento"
-    ) %>% dplyr::filter(!(Sentimiento %in% c("positive", "negative", "trust")))
-  nrc
-  nrc[nrc$Sentimiento == "anger", ]$Sentimiento <- translator$t("Anger")
-  nrc[nrc$Sentimiento == "anticipation", ]$Sentimiento <- translator$t("Anticipation")
-  nrc[nrc$Sentimiento == "disgust", ]$Sentimiento <- translator$t("Disgust")
-  nrc[nrc$Sentimiento == "fear", ]$Sentimiento <- translator$t("Fear")
-  nrc[nrc$Sentimiento == "joy", ]$Sentimiento <- translator$t("Joy")
-  nrc[nrc$Sentimiento == "sadness", ]$Sentimiento <- translator$t("Sadness")
-  nrc[nrc$Sentimiento == "surprise", ]$Sentimiento <- translator$t("Surprise")
-
-  nrc <- nrc %>% 
-    select(Sentimiento, value) %>%
-    filter(value != 0) %>% 
-    group_by(Sentimiento) %>% 
-    summarise(valencia=sum(value))
-  
-  custom_breaks <- unique(sort(nrc$valencia))
-  
-  plot <- nrc %>% ggplot2::ggplot(ggplot2::aes(
-    x = Sentimiento, y = valencia, fill = Sentimiento # , fill = source.name
-  )) +
-    ggplot2::geom_bar(stat = "identity") +
-    ggplot2::ggtitle(title, subtitle) +
-    ggplot2::labs(caption = caption) +
-    ggplot2::coord_flip() +
-    ggplot2::xlab(translator$t("Sentiment")) +
-    ggplot2::ylab(translator$t("NRC Score")) +
-    ggplot2::theme_gray() +
-    custom_theme +
-    ggplot2::scale_y_continuous(breaks = custom_breaks, limits = c(0, max(custom_breaks))) +
-    ggplot2::guides(fill = FALSE) +
-    ggplot2::scale_color_brewer()
-
-  return(plot)
 }

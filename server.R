@@ -25,6 +25,8 @@ server <- function(input, output, session) {
   values <- shiny::reactiveValues()
   values$is_empty <- TRUE
 
+  getAvailableCountries()
+
   shiny::observeEvent(input$btn_start, {
     values$date_range <- shiny::isolate(input$dt_fechas)
     values$caption_txt <- shiny::isolate(input$txt_caption)
@@ -73,57 +75,29 @@ server <- function(input, output, session) {
 
   output$plt_sentiment <- shiny::renderPlot({
     title <- stringr::str_to_title(
-      stringr::str_interp(str_interp("${i18n$t('Searched word')}: ${values$caption_txt}"))
-    )
+      stringr::str_interp("${i18n$t('Searched word')}: ${values$caption_txt}"))
+    
     subtitle <- i18n$t("NRC Sentiment Analysis (Emotion-Lexicon)")
 
     if (values$is_empty) {
       ggplot2::ggplot() +
         ggplot2::geom_blank()
-    }
-    else {
+    } else {
       # show plot
-      nrc <- processWithNRC(values$df_req, values$lang)
+
+      tryCatch(
+        expr = nrc <- processWithNRC(values$df_req, values$lang), error = function(cond) {
+          message("Here's the original error message:")
+          message(cond)
+        },
+        warning = function(cond) {
+          message(cond)
+        }
+      )
 
       plotSentiment(nrc, title = title, subtitle = subtitle, translator = i18n)
     }
   })
 
-  output$tbl_sentiment <- DT::renderDataTable({
-    if (values$is_empty) {
-      DT::datatable(NULL)
-    } else {
-      df_formatted <- values$df_req
-      df_formatted$Imagen <- paste0(
-        "<a href='", df_formatted$url, "'>",
-        "<img src=", df_formatted$urlToImage,
-        " height=64></img></a>"
-      )
-      df_formatted$urlToImage <- NULL
-
-      df_formatted %>%
-        select("Title" = title, "Image" = Imagen, "Source" = source.name, "Description" = description) %>%
-        rename_all(i18n$t) %>%
-        DT::datatable(
-          escape = FALSE,
-          rownames = FALSE,
-          class = "compact stripe",
-          style = "bootstrap",
-          selection = "none",
-          options = list(
-            dom = "tip",
-            language = list(
-              url =
-                stringr::str_interp("//cdn.datatables.net/plug-ins/1.10.11/i18n/${i18n$t('English.json')}")
-            ),
-            initComplete = DT::JS(
-              "function(settings, json) {",
-              "$(this.api().table().header()).css({'background-color': '#000', 'color': '#fff', 'font-size':'11px'});",
-              "$(this.api().table().body()).css({'background-color': '#C6B3B9', 'color': '#000', 'font-size':'10px'});",
-              "}"
-            )
-          )
-        )
-    }
-  })
+  output$tbl_sentiment <- renderNewsTable(values, df_formatted)
 }
